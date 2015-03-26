@@ -135,7 +135,7 @@ gmap.Marker = function(params,marker_id) {
 	}
 
 	var init = function() {
-		if( typeof event != 'undefined' ) {
+		if( typeof marker_id != 'undefined' ) {
 			object.marker_id = marker_id;
 		}
 
@@ -143,7 +143,7 @@ gmap.Marker = function(params,marker_id) {
 		$.extend(object.params,params);
 
 		// rewrite map parameter if provided
-		if (params.map != null) {
+		if (typeof params != 'undefined' && params.map != null) {
 			object.map = params.map;
 			object.params.map = params.map.getMapObject();
 		}
