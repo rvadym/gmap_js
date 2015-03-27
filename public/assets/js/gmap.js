@@ -14,7 +14,7 @@ var gmap = {};
 gmap.Map = function(params) {
 
 	var object = this;
-	var map = null; // real google map
+	var map = null; // google.maps.Map
 
 	this.params = {
 		//map_type: eval(map_type_string),
@@ -74,15 +74,15 @@ gmap.Marker = function(params,marker_id) {
 	this.marker_id = 'gmap_marker';
 
 	var object = this;
-	var marker = null;
-	var map = null;
+	var marker = null; //  google.maps.Marker
+	var map = null;  // gmap.Map
 
 	this.params = {
 		animation: google.maps.Animation.DROP,
 		clickable: true,
 		draggable: false,
 		title: null,
-		map: null,
+		map: null,       // google.maps.Map
 		info_window: null
 	};
 
@@ -96,10 +96,10 @@ gmap.Marker = function(params,marker_id) {
 		return object;
 	};
 
-	this.setMap = function( map ) {
-		object.map = map;
-		object.params.map = object.map.getMapObject();
-		object.getMarkerObject().setMap( object.params.map );
+	this.setMap = function( map ) { // gmap.Map
+		object.map = map;   // gmap.Map
+		object.params.map = object.map.getMapObject(); //  google.maps.Map
+		object.getMarkerObject().setMap( object.params.map ); //  google.maps.Map
 		return object;
 	};
 
@@ -108,16 +108,16 @@ gmap.Marker = function(params,marker_id) {
 		return object;
 	};
 
-	this.addInfoWindow = function(content, event, params) {
+	this.addInfoWindow = function(content, event, config) {
 
 		if( typeof event == 'undefined' ) {
 			event = 'click';
 		}
-		if( typeof params == 'undefined' ) {
-			params = {};
+		if( typeof config == 'undefined' ) {
+			config = {};
 		}
 
-		$.extend(params,{
+		$.extend(config,{
 			content: content
 		});
 
@@ -125,9 +125,9 @@ gmap.Marker = function(params,marker_id) {
 			if( object.params.info_window != null ) {
 				object.params.info_window.close();
 			}
-			object.params.info_window = new google.maps.InfoWindow( params );
+			object.params.info_window = new google.maps.InfoWindow( config );
 			object.params.info_window.open(
-				object.params.map.getMapObject(),
+				object.params.map,
 				object.getMarkerObject()
 			);
 		});
@@ -147,7 +147,7 @@ gmap.Marker = function(params,marker_id) {
 			object.map = params.map;
 			object.params.map = params.map.getMapObject();
 		}
-		console.log(object.params);
+		//console.log(object.params);
 		marker = new google.maps.Marker(object.params);
 		return object;
 	};
