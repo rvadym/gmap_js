@@ -90,9 +90,12 @@ gmap.Marker = function(params,marker_id) {
 		return marker;
 	}
 
-	this.setPosition = function(lat,lng) {
+	this.setPosition = function(lat,lng,focus_map) {
 		var latlng = new google.maps.LatLng(lat, lng);
 		object.getMarkerObject().setPosition( latlng );
+		if( typeof focus_map != 'undefined' && focus_map === true ) {
+			object.map.setCenter(lat,lng);
+		}
 		return object;
 	};
 
@@ -164,6 +167,7 @@ gmap.Marker = function(params,marker_id) {
 gmap.Form = function(params) {
 
 	var object = this;
+	var marker = null; // gmap.Marker
 
 	this.params = {
 
@@ -172,27 +176,79 @@ gmap.Form = function(params) {
 		address_element_id: 'address_field',
 		latitude_element_id: 'latitude_field',
 		longitude_element_id: 'longitude_field',
+		zoom_element_id: 'zoom_field',
 
 		// elements
 		form_element: null,
 		address_element: null,
 		latitude_element: null,
 		longitude_element: null,
+		zoom_element: null,
 
 		// update flags
 		update_address: true,
 		update_latitude: true,
-		update_longitude: true
+		update_longitude: true,
+		update_zoom: true
 
 	};
 
+	this.setMarker = function( marker ) { // gmap.Marker
+		object.marker = marker;
+		object.marker.setPosition(object.params.latitude_element.val(), object.params.longitude_element.val(), true);
+		if (object.marker.params.draggable === true) {
+			updateFormOnMarkerDrag();
+		}
+		return object;
+	}
+
+	var updateFormOnMarkerDrag = function() {
+
+		// http://gmaps-samples-v3.googlecode.com/svn/trunk/draggable-markers/draggable-markers.html
+		// Add dragging event listeners.
+		/*google.maps.event.addListener(marker, 'dragstart', function() {
+		 updateMarkerAddress('Dragging...');
+		 });*/
+
+		/*google.maps.event.addListener(marker, 'drag', function() {
+		 updateMarkerStatus('Dragging...');
+		 updateMarkerPosition(marker.getPosition());
+		 });*/
+
+		google.maps.event.addListener(object.marker.getMarkerObject(), 'dragend', function() {
+			var util = new gmap.Util();
+			util.geocodePosition(object.marker.getMarkerObject().getPosition(),function(data) {
+				console.log('data');
+				console.log(data);
+				var address = data.formatted_address;
+				var lat = data.geometry.location.D;
+				var lng = data.geometry.location.k;
+				object.params.address_element.val(address);
+				object.params.latitude_element.val(lng);
+				object.params.longitude_element.val(lat);
+			});
+		});
+
+	}
+
 	var init = function() {
+
+		// get marker from params
+		if ( typeof params != 'undefined' && typeof params.marker != 'undefined' && params.marker != null ) { // gmap.Marker
+			marker = params.marker;
+			delete params.marker;
+		}
+
 		$.extend(object.params,params);
 
-		if (!object.params.form_element) object.params.form_element = $('#'+object.params.form_element_id);
+		//if (!object.params.form_element) object.params.form_element = $('#'+object.params.form_element_id);
 		if (!object.params.address_element) object.params.address_element = $('#'+object.params.address_element_id);
 		if (!object.params.latitude_element) object.params.latitude_element = $('#'+object.params.latitude_element_id);
 		if (!object.params.longitude_element) object.params.longitude_element = $('#'+object.params.longitude_element_id);
+
+		if ( marker != null ) {
+			object.setMarker(marker);
+		}
 
 		return object;
 	};
@@ -200,10 +256,41 @@ gmap.Form = function(params) {
 }
 
 
+/**
+ *
+ * @constructor
+ */
+gmap.Util = function() {
 
+	this.geocodePosition = function (pos, success_callback, return_all, error_message_callback) {
+		if( typeof return_all == 'undefined' ) {
+			return_all = false;
+		}
+		if( typeof error_message_callback == 'undefined' ) {
+			error_message_callback = function(msg) {alert(msg)};
+		}
+		var geocoder = new google.maps.Geocoder();
+		geocoder.geocode({
+			latLng: pos
+		}, function(responses) {
+			if (responses && responses.length > 0) {
+				if (return_all) {
+					var respond = responses;
+				} else {
+					var respond = responses[0];
+				}
+				success_callback(respond);
 
+				//responses[0].formatted_address,
+				//responses[0].geometry.location.D,
+				//responses[0].geometry.location.k
 
-
+			} else {
+				error_message_callback('Cannot determine address at this location.');
+			}
+		});
+	};
+}
 
 
 
