@@ -1,12 +1,18 @@
 {
     "name": "rvadym/gmap_js",
     "type": "library",
-    "version": "4.3.x",
+    "version": "1.0.x",
     "description": "Google Map wrapper",
     "keywords": ["addon","google map"],
     "authors": [
         {
             "name": "Vadym Radvansky"
         }
-    ]
+    ],
+
+	"autoload": {
+		"psr-4": {
+			"rvadym\\gmapjs\\": "src/"
+		}
+	}
 }
