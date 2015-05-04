@@ -13,53 +13,53 @@ var gmap = {};
  */
 gmap.Map = function(params) {
 
-	var object = this;
-	var map = null; // google.maps.Map
+    var object = this;
+    var map = null; // google.maps.Map
 
-	this.params = {
-		//map_type: eval(map_type_string),
-		map_type: google.maps.MapTypeId.ROADMAP,
-		element_id: 'map',
-		zoom: 10,
-		markers: {} // gmap.Marker
-	};
+    this.params = {
+        //map_type: eval(map_type_string),
+        map_type: google.maps.MapTypeId.ROADMAP,
+        element_id: 'map',
+        zoom: 10,
+        markers: {} // gmap.Marker
+    };
 
-	this.getMapObject = function() {
-		return map;
-	}
+    this.getMapObject = function() {
+        return map;
+    }
 
-	this.addMarker = function(marker) {
-		id = marker.marker_id;
-		object.params.markers[id] = marker;
-		object.params.markers[id].setMap(object);
-		return object;
-	};
+    this.addMarker = function(marker) {
+        id = marker.marker_id;
+        object.params.markers[id] = marker;
+        object.params.markers[id].setMap(object);
+        return object;
+    };
 
-	this.removeMarker = function(marker_id) {
-		//marker.setMap(map);
-		//this.params.markers[marker_id] = marker;
-		return object;
-	};
+    this.removeMarker = function(marker_id) {
+        //marker.setMap(map);
+        //this.params.markers[marker_id] = marker;
+        return object;
+    };
 
-	this.getMarker = function(marker_id) {
-		return object.params.markers[marker_id];
-	};
+    this.getMarker = function(marker_id) {
+        return object.params.markers[marker_id];
+    };
 
-	this.setCenter = function(lat,lng) {
-		var latlng = new google.maps.LatLng(lat, lng);
-		this.getMapObject().panTo(latlng);
-		return object;
-	};
+    this.setCenter = function(lat,lng) {
+        var latlng = new google.maps.LatLng(lat, lng);
+        this.getMapObject().panTo(latlng);
+        return object;
+    };
 
-	var init = function() {
-		$.extend(object.params,params);
-		map = new google.maps.Map(
-			$( '#'+object.params.element_id )[0],
-			object.params
-		);
-		return object;
-	};
-	return init();
+    var init = function() {
+        $.extend(object.params,params);
+        map = new google.maps.Map(
+            $( '#'+object.params.element_id )[0],
+            object.params
+        );
+        return object;
+    };
+    return init();
 };
 
 
@@ -71,90 +71,90 @@ gmap.Map = function(params) {
  */
 gmap.Marker = function(params,marker_id) {
 
-	this.marker_id = 'gmap_marker';
+    this.marker_id = 'gmap_marker';
 
-	var object = this;
-	var marker = null; //  google.maps.Marker
-	var map = null;  // gmap.Map
+    var object = this;
+    var marker = null; //  google.maps.Marker
+    var map = null;  // gmap.Map
 
-	this.params = {
-		animation: google.maps.Animation.DROP,
-		clickable: true,
-		draggable: false,
-		title: null,
-		map: null,       // google.maps.Map
-		info_window: null
-	};
+    this.params = {
+        animation: google.maps.Animation.DROP,
+        clickable: true,
+        draggable: false,
+        title: null,
+        map: null,       // google.maps.Map
+        info_window: null
+    };
 
-	this.getMarkerObject = function() {
-		return marker;
-	}
+    this.getMarkerObject = function() {
+        return marker;
+    }
 
-	this.setPosition = function(lat,lng,focus_map) {
-		var latlng = new google.maps.LatLng(lat, lng);
-		object.getMarkerObject().setPosition( latlng );
-		if( typeof focus_map != 'undefined' && focus_map === true ) {
-			object.map.setCenter(lat,lng);
-		}
-		return object;
-	};
+    this.setPosition = function(lat,lng,focus_map) {
+        var latlng = new google.maps.LatLng(lat, lng);
+        object.getMarkerObject().setPosition( latlng );
+        if( typeof focus_map != 'undefined' && focus_map === true ) {
+            object.map.setCenter(lat,lng);
+        }
+        return object;
+    };
 
-	this.setMap = function( map ) { // gmap.Map
-		object.map = map;   // gmap.Map
-		object.params.map = object.map.getMapObject(); //  google.maps.Map
-		object.getMarkerObject().setMap( object.params.map ); //  google.maps.Map
-		return object;
-	};
+    this.setMap = function( map ) { // gmap.Map
+        object.map = map;   // gmap.Map
+        object.params.map = object.map.getMapObject(); //  google.maps.Map
+        object.getMarkerObject().setMap( object.params.map ); //  google.maps.Map
+        return object;
+    };
 
-	this.setTitle = function( title ) {
-		object.getMarkerObject().setTitle( title );
-		return object;
-	};
+    this.setTitle = function( title ) {
+        object.getMarkerObject().setTitle( title );
+        return object;
+    };
 
-	this.addInfoWindow = function(content, event, config) {
+    this.addInfoWindow = function(content, event, config) {
 
-		if( typeof event == 'undefined' ) {
-			event = 'click';
-		}
-		if( typeof config == 'undefined' ) {
-			config = {};
-		}
+        if( typeof event == 'undefined' ) {
+            event = 'click';
+        }
+        if( typeof config == 'undefined' ) {
+            config = {};
+        }
 
-		$.extend(config,{
-			content: content
-		});
+        $.extend(config,{
+            content: content
+        });
 
-		google.maps.event.addListener(marker, event, function() {
-			if( object.params.info_window != null ) {
-				object.params.info_window.close();
-			}
-			object.params.info_window = new google.maps.InfoWindow( config );
-			object.params.info_window.open(
-				object.params.map,
-				object.getMarkerObject()
-			);
-		});
+        google.maps.event.addListener(marker, event, function() {
+            if( object.params.info_window != null ) {
+                object.params.info_window.close();
+            }
+            object.params.info_window = new google.maps.InfoWindow( config );
+            object.params.info_window.open(
+                object.params.map,
+                object.getMarkerObject()
+            );
+        });
 
-	}
+    }
 
-	var init = function() {
-		if( typeof marker_id != 'undefined' ) {
-			object.marker_id = marker_id;
-		}
+    var init = function() {
+        if( typeof marker_id != 'undefined' ) {
+            object.marker_id = marker_id;
+        }
 
-		// mix params
-		$.extend(object.params,params);
+        // mix params
+        $.extend(object.params,params);
 
-		// rewrite map parameter if provided
-		if (typeof params != 'undefined' && params.map != null) {
-			object.map = params.map;
-			object.params.map = params.map.getMapObject();
-		}
-		//console.log(object.params);
-		marker = new google.maps.Marker(object.params);
-		return object;
-	};
-	return init();
+        // rewrite map parameter if provided
+        if (typeof params != 'undefined' && params.map != null) {
+            object.map = params.map;
+            object.params.map = params.map.getMapObject();
+        }
+        //console.log(object.params);
+        marker = new google.maps.Marker(object.params);
+        return object;
+    };
+    return init();
 
 }
 
@@ -166,93 +166,93 @@ gmap.Marker = function(params,marker_id) {
  */
 gmap.Form = function(params) {
 
-	var object = this;
-	var marker = null; // gmap.Marker
+    var object = this;
+    var marker = null; // gmap.Marker
 
-	this.params = {
+    this.params = {
 
-		// element ids
-		form_element_id: 'map_form',
-		address_element_id: 'address_field',
-		latitude_element_id: 'latitude_field',
-		longitude_element_id: 'longitude_field',
-		zoom_element_id: 'zoom_field',
+        // element ids
+        form_element_id: 'map_form',
+        address_element_id: 'address_field',
+        latitude_element_id: 'latitude_field',
+        longitude_element_id: 'longitude_field',
+        zoom_element_id: 'zoom_field',
 
-		// elements
-		form_element: null,
-		address_element: null,
-		latitude_element: null,
-		longitude_element: null,
-		zoom_element: null,
+        // elements
+        form_element: null,
+        address_element: null,
+        latitude_element: null,
+        longitude_element: null,
+        zoom_element: null,
 
-		// update flags
-		update_address: true,
-		update_latitude: true,
-		update_longitude: true,
-		update_zoom: true
+        // update flags
+        update_address: true,
+        update_latitude: true,
+        update_longitude: true,
+        update_zoom: true
 
-	};
+    };
 
-	this.setMarker = function( marker ) { // gmap.Marker
-		object.marker = marker;
-		object.marker.setPosition(object.params.latitude_element.val(), object.params.longitude_element.val(), true);
-		if (object.marker.params.draggable === true) {
-			updateFormOnMarkerDrag();
-		}
-		return object;
-	}
+    this.setMarker = function( marker ) { // gmap.Marker
+        object.marker = marker;
+        object.marker.setPosition(object.params.latitude_element.val(), object.params.longitude_element.val(), true);
+        if (object.marker.params.draggable === true) {
+            updateFormOnMarkerDrag();
+        }
+        return object;
+    }
 
-	var updateFormOnMarkerDrag = function() {
+    var updateFormOnMarkerDrag = function() {
 
-		// http://gmaps-samples-v3.googlecode.com/svn/trunk/draggable-markers/draggable-markers.html
-		// Add dragging event listeners.
-		/*google.maps.event.addListener(marker, 'dragstart', function() {
-		 updateMarkerAddress('Dragging...');
-		 });*/
+        // http://gmaps-samples-v3.googlecode.com/svn/trunk/draggable-markers/draggable-markers.html
+        // Add dragging event listeners.
+        /*google.maps.event.addListener(marker, 'dragstart', function() {
+         updateMarkerAddress('Dragging...');
+         });*/
 
-		/*google.maps.event.addListener(marker, 'drag', function() {
-		 updateMarkerStatus('Dragging...');
-		 updateMarkerPosition(marker.getPosition());
-		 });*/
+        /*google.maps.event.addListener(marker, 'drag', function() {
+         updateMarkerStatus('Dragging...');
+         updateMarkerPosition(marker.getPosition());
+         });*/
 
-		google.maps.event.addListener(object.marker.getMarkerObject(), 'dragend', function() {
-			var util = new gmap.Util();
-			util.geocodePosition(object.marker.getMarkerObject().getPosition(),function(data) {
-				console.log('data');
-				console.log(data);
-				var address = data.formatted_address;
-				var lat = data.geometry.location.D;
-				var lng = data.geometry.location.k;
-				object.params.address_element.val(address);
-				object.params.latitude_element.val(lng);
-				object.params.longitude_element.val(lat);
-			});
-		});
+        google.maps.event.addListener(object.marker.getMarkerObject(), 'dragend', function() {
+            var util = new gmap.Util();
+            util.geocodePosition(object.marker.getMarkerObject().getPosition(),function(data) {
+                //console.log('data');
+                //console.log(data);
+                var address = data.formatted_address;
+                var lat = data.geometry.location.lat();
+                var lng = data.geometry.location.lng();
+                object.params.address_element.val(address);
+                object.params.latitude_element.val(lng);
+                object.params.longitude_element.val(lat);
+            });
+        });
 
-	}
+    }
 
-	var init = function() {
+    var init = function() {
 
-		// get marker from params
-		if ( typeof params != 'undefined' && typeof params.marker != 'undefined' && params.marker != null ) { // gmap.Marker
-			marker = params.marker;
-			delete params.marker;
-		}
+        // get marker from params
+        if ( typeof params != 'undefined' && typeof params.marker != 'undefined' && params.marker != null ) { // gmap.Marker
+            marker = params.marker;
+            delete params.marker;
+        }
 
-		$.extend(object.params,params);
+        $.extend(object.params,params);
 
-		//if (!object.params.form_element) object.params.form_element = $('#'+object.params.form_element_id);
-		if (!object.params.address_element) object.params.address_element = $('#'+object.params.address_element_id);
-		if (!object.params.latitude_element) object.params.latitude_element = $('#'+object.params.latitude_element_id);
-		if (!object.params.longitude_element) object.params.longitude_element = $('#'+object.params.longitude_element_id);
+        //if (!object.params.form_element) object.params.form_element = $('#'+object.params.form_element_id);
+        if (!object.params.address_element) object.params.address_element = $('#'+object.params.address_element_id);
+        if (!object.params.latitude_element) object.params.latitude_element = $('#'+object.params.latitude_element_id);
+        if (!object.params.longitude_element) object.params.longitude_element = $('#'+object.params.longitude_element_id);
 
-		if ( marker != null ) {
-			object.setMarker(marker);
-		}
+        if ( marker != null ) {
+            object.setMarker(marker);
+        }
 
-		return object;
-	};
-	return init();
+        return object;
+    };
+    return init();
 }
 
 
@@ -262,34 +262,34 @@ gmap.Form = function(params) {
  */
 gmap.Util = function() {
 
-	this.geocodePosition = function (pos, success_callback, return_all, error_message_callback) {
-		if( typeof return_all == 'undefined' ) {
-			return_all = false;
-		}
-		if( typeof error_message_callback == 'undefined' ) {
-			error_message_callback = function(msg) {alert(msg)};
-		}
-		var geocoder = new google.maps.Geocoder();
-		geocoder.geocode({
-			latLng: pos
-		}, function(responses) {
-			if (responses && responses.length > 0) {
-				if (return_all) {
-					var respond = responses;
-				} else {
-					var respond = responses[0];
-				}
-				success_callback(respond);
+    this.geocodePosition = function (pos, success_callback, return_all, error_message_callback) {
+        if( typeof return_all == 'undefined' ) {
+            return_all = false;
+        }
+        if( typeof error_message_callback == 'undefined' ) {
+            error_message_callback = function(msg) {alert(msg)};
+        }
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+            latLng: pos
+        }, function(responses) {
+            if (responses && responses.length > 0) {
+                if (return_all) {
+                    var respond = responses;
+                } else {
+                    var respond = responses[0];
+                }
+                success_callback(respond);
 
-				//responses[0].formatted_address,
-				//responses[0].geometry.location.D,
-				//responses[0].geometry.location.k
+                //responses[0].formatted_address,
+                //responses[0].geometry.location.D,
+                //responses[0].geometry.location.k
 
-			} else {
-				error_message_callback('Cannot determine address at this location.');
-			}
-		});
-	};
+            } else {
+                error_message_callback('Cannot determine address at this location.');
+            }
+        });
+    };
 }
 
 
