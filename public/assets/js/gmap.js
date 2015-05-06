@@ -224,8 +224,8 @@ gmap.Form = function(params) {
                 var lat = data.geometry.location.lat();
                 var lng = data.geometry.location.lng();
                 object.params.address_element.val(address);
-                object.params.latitude_element.val(lng);
-                object.params.longitude_element.val(lat);
+                object.params.latitude_element.val(lat);
+                object.params.longitude_element.val(lng);
             });
         });
 
