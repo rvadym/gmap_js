@@ -5,6 +5,8 @@
 var gmap = {};
 
 
+// gmap.Map ------------------------------------------------------------------------------------------------------------
+
 /**
  *
  * @param params
@@ -47,8 +49,13 @@ gmap.Map = function(params) {
 
     this.setCenter = function(lat,lng) {
         var latlng = new google.maps.LatLng(lat, lng);
+        this.getMapObject().setCenter(latlng);
         this.getMapObject().panTo(latlng);
         return object;
+    };
+
+    this.getCenter = function() {
+        return this.getMapObject().getCenter();
     };
 
     var init = function() {
@@ -57,11 +64,13 @@ gmap.Map = function(params) {
             $( '#'+object.params.element_id )[0],
             object.params
         );
+        object.setCenter(0, 0);
         return object;
     };
     return init();
 };
 
+// gmap.Marker ---------------------------------------------------------------------------------------------------------
 
 /**
  *
@@ -94,9 +103,13 @@ gmap.Marker = function(params,marker_id) {
         var latlng = new google.maps.LatLng(lat, lng);
         object.getMarkerObject().setPosition( latlng );
         if( typeof focus_map != 'undefined' && focus_map === true ) {
-            object.map.setCenter(lat,lng);
+            object.getMap().setCenter(lat,lng);
         }
         return object;
+    };
+
+    this.getPosition = function() {
+        return object.getMarkerObject().getPosition();
     };
 
     this.setMap = function( map ) { // gmap.Map
@@ -105,6 +118,10 @@ gmap.Marker = function(params,marker_id) {
         object.getMarkerObject().setMap( object.params.map ); //  google.maps.Map
         return object;
     };
+
+    this.getMap = function() {
+        return object.map;
+    }
 
     this.setTitle = function( title ) {
         object.getMarkerObject().setTitle( title );
@@ -158,6 +175,8 @@ gmap.Marker = function(params,marker_id) {
 
 }
 
+// gmap.Form -----------------------------------------------------------------------------------------------------------
+
 /**
  *
  * @param params
@@ -195,11 +214,18 @@ gmap.Form = function(params) {
 
     this.setMarker = function( marker ) { // gmap.Marker
         object.marker = marker;
-        object.marker.setPosition(object.params.latitude_element.val(), object.params.longitude_element.val(), true);
+
+        object.getMarker().setPosition(object.params.latitude_element.val(), object.params.longitude_element.val(), true);
+
         if (object.marker.params.draggable === true) {
             updateFormOnMarkerDrag();
         }
+
         return object;
+    }
+
+    this.getMarker = function() {
+        return object.marker;
     }
 
     var updateFormOnMarkerDrag = function() {
@@ -218,14 +244,12 @@ gmap.Form = function(params) {
         google.maps.event.addListener(object.marker.getMarkerObject(), 'dragend', function() {
             var util = new gmap.Util();
             util.geocodePosition(object.marker.getMarkerObject().getPosition(),function(data) {
-                //console.log('data');
-                //console.log(data);
                 var address = data.formatted_address;
                 var lat = data.geometry.location.lat();
                 var lng = data.geometry.location.lng();
                 object.params.address_element.val(address);
-                object.params.latitude_element.val(lng);
-                object.params.longitude_element.val(lat);
+                object.params.latitude_element.val(lat);
+                object.params.longitude_element.val(lng);
             });
         });
 
@@ -239,7 +263,7 @@ gmap.Form = function(params) {
             delete params.marker;
         }
 
-        $.extend(object.params,params);
+        $.extend(object.params, params);
 
         //if (!object.params.form_element) object.params.form_element = $('#'+object.params.form_element_id);
         if (!object.params.address_element) object.params.address_element = $('#'+object.params.address_element_id);
@@ -252,9 +276,12 @@ gmap.Form = function(params) {
 
         return object;
     };
+
     return init();
 }
 
+
+// gmap.Util -----------------------------------------------------------------------------------------------------------
 
 /**
  *
@@ -280,16 +307,12 @@ gmap.Util = function() {
                     var respond = responses[0];
                 }
                 success_callback(respond);
-
-                //responses[0].formatted_address,
-                //responses[0].geometry.location.D,
-                //responses[0].geometry.location.k
-
             } else {
                 error_message_callback('Cannot determine address at this location.');
             }
         });
     };
+
 }
 
 
